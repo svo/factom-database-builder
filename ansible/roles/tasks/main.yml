@@ -1,0 +1,12 @@
+
+    - name: Install aptitude
+      apt: pkg=aptitude update_cache=yes
+      become: yes
+
+    - name: Apt update/upgrade
+      apt: upgrade=yes update_cache=yes
+      become: yes
+
+    - name: Install tmux terminal multiplexer
+      apt: pkg=tmux
+      become: yes
