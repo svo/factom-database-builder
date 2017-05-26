@@ -8,6 +8,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     test.vm.hostname = "vagrant-factom-database-builder-test"
     test.vm.network :private_network, type: "dhcp"
 
+    test.vm.provision "shell", inline: "sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y install python"
+
     test.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/playbook.yml"
     end
@@ -19,7 +21,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     test.vm.synced_folder ".", "/vagrant"
 
     test.vm.provider :virtualbox do |vb, override|
-      override.vm.box_url = "https://vagrantcloud.com/ubuntu/xenial64"
       override.vm.box = "ubuntu/xenial64"
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
@@ -46,14 +47,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     dev.vm.synced_folder ".", "/vagrant"
 
     dev.vm.provider :virtualbox do |vb, override|
-      override.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64"
       override.vm.box = "ubuntu/trusty64"
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     end
   end
 
   config.vm.define "ci" do |ci|
-    ci.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64"
     ci.vm.box = "ubuntu/trusty64"
 
     ci.vm.hostname = "vagrant-factom-database-builder-ci"
