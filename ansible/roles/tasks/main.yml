@@ -10,3 +10,29 @@
     - name: Install tmux terminal multiplexer
       apt: pkg=tmux
       become: yes
+
+    - name: Install unzip
+      apt: pkg=unzip
+      become: yes
+
+    - name: Download factom .deb
+      get_url: url=https://github.com/FactomProject/distribution/releases/download/v0.4.2.1/factom-amd64.deb dest=/tmp/factom-amd64.deb checksum=sha256:e8a1a1cdf569f7f572cc7611c963f30dc2b833d9d79091bbe4745a46505afb85
+      register: get_deb_result
+      until: get_deb_result | succeeded
+      retries: 3
+      delay: 1
+
+    - name: Install factom
+      apt: deb=/tmp/factom-amd64.deb
+      become: yes
+
+    - name: Download factom bootstrap
+      get_url: url=https://www.factom.com/assets/site/factom_bootstrap.zip dest=~/factom_bootstrap.zip checksum=sha256:2d4d256c337cdabc8f75aa71180c72129f807c365c78356471350ac1e0a4faed
+      register: get_bootstrap_result
+      until: get_bootstrap_result | succeeded
+      retries: 3
+      delay: 1
+
+    - name: Unarchive factom bootstrap
+      unarchive: src=~/factom_bootstrap.zip remote_src=yes dest=~/
+      when: get_bootstrap_result.changed
